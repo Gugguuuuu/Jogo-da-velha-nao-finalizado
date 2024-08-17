@@ -1,0 +1,80 @@
+// Seleciona todos os elementos da classe 'cell' (as células do tabuleiro)
+const cells = document.querySelectorAll('.cell');
+
+// Variável que indica qual jogador está jogando (1 para o primeiro jogador, 2 para o segundo)
+let currentPlayer = 1;
+
+// Array que representa o estado atual do tabuleiro. Cada posição corresponde a uma célula do jogo.
+let gameBoard = ['', '', '', '', '', '', '', '', ''];
+
+// Array que contém todas as combinações vencedoras possíveis no jogo da velha
+const winningCombinations = [
+    [0, 1, 2], // Linha superior
+    [3, 4, 5], // Linha do meio
+    [6, 7, 8], // Linha inferior
+    [0, 3, 6], // Coluna esquerda
+    [1, 4, 7], // Coluna do meio
+    [2, 5, 8], // Coluna direita
+    [0, 4, 8], // Diagonal principal
+    [2, 4, 6]  // Diagonal secundária
+];
+
+// Para cada célula do tabuleiro, adiciona um evento de clique
+cells.forEach((cell, index) => {
+    cell.addEventListener('click', () => {
+        // Verifica se a célula está vazia antes de permitir uma jogada
+        if (cell.innerText === '') {
+            // Define o símbolo com base no jogador atual (X para ímpar, O para par)
+            let symbol;
+            if (currentPlayer % 2 === 0) {
+                symbol = 'O';
+            } else {
+                symbol = 'X';
+            }
+
+            // Coloca o símbolo na célula clicada
+            cell.innerText = symbol;
+            // Atualiza o estado do tabuleiro com o símbolo
+            gameBoard[index] = symbol;
+
+            // Verifica se houve um vencedor após essa jogada
+            if (checkWinner()) {
+                // Se houver um vencedor, destaca as células vencedoras
+                highlightWinningCells();
+            }
+
+            // Alterna para o próximo jogador
+            currentPlayer++;
+        }
+    });
+});
+
+// Função que verifica se há um vencedor
+function checkWinner() {
+    // Percorre todas as combinações vencedoras
+    for (let i = 0; i < winningCombinations.length; i++) {
+        // Desestrutura a combinação em três índices do tabuleiro
+        const [a, b, c] = winningCombinations[i];
+        // Verifica se os três índices têm o mesmo símbolo e não estão vazios
+        if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+            return true; // Se encontrar uma combinação vencedora, retorna verdadeiro
+        }
+    }
+    return false; // Se nenhuma combinação for encontrada, retorna falso
+}
+
+// Função que destaca as células vencedoras
+function highlightWinningCells() {
+    // Percorre todas as combinações vencedoras
+    for (let i = 0; i < winningCombinations.length; i++) {
+        // Desestrutura a combinação em três índices do tabuleiro
+        const [a, b, c] = winningCombinations[i];
+        // Verifica se os três índices têm o mesmo símbolo e não estão vazios
+        if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+            // Adiciona a classe 'green' às células vencedoras para destacar
+            cells[a].classList.add('green');
+            cells[b].classList.add('green');
+            cells[c].classList.add('green');
+        }
+    }
+}
